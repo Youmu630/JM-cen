@@ -776,7 +776,7 @@ M.health={
   },
   async menu(){const t=getToday();
     return`<div class="card" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none"><div style="font-size:var(--font-lg);font-weight:700">🏃 健康管理</div><div style="font-size:var(--font-sm);opacity:.85;margin-top:4px">${fmt(t,'YYYY年MM月DD日')}</div></div>
-    <div class="card">${[['kitchen','🍳','厨房秘籍','分类收纳菜品、食材、教程','#FF5722'],['recipe','🥗','智能食谱','BMI/TDEE计算 + 专属食谱','#4CAF50'],['exercise','🏋️','运动记录','记录运动类型、时长、打卡','#2196F3'],['video','📹','视频跟练','运动教程、内置计时器','#9C27B0'],['temperature','🌡️','体温记录','趋势图 + 异常标记 + 就医提醒','#F44336']].map(m=>`<div class="list-item" style="cursor:pointer" onclick="navigate('${m[0]}')"><div style="width:46px;height:46px;border-radius:12px;background:${m[3]}22;color:${m[3]};display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0">${m[1]}</div><div style="flex:1;margin-left:8px"><div style="font-weight:600">${m[2]}</div><div style="font-size:var(--font-xs);color:var(--text-tertiary)">${m[4]}</div></div><span style="color:var(--text-tertiary)">›</span></div>`).join('')}</div>`},
+    <div class="card">${[['kitchen','🍳','厨房秘籍','分类收纳菜品、食材、教程','#FF5722'],['recipe','🥗','智能食谱','BMI/TDEE计算 + 专属食谱','#4CAF50'],['exercise','🏋️','运动记录','记录运动类型、时长、打卡','#2196F3'],['video','📹','视频跟练','添加跟练视频库 · 自动打卡','#9C27B0'],['temperature','🌡️','体温记录','趋势图 + 异常标记 + 就医提醒','#F44336']].map(m=>`<div class="list-item" style="cursor:pointer" onclick="navigate('${m[0]}')"><div style="width:46px;height:46px;border-radius:12px;background:${m[3]}22;color:${m[3]};display:flex;align-items:center;justify-content:center;font-size:23px;flex-shrink:0">${m[1]}</div><div style="flex:1;margin-left:8px"><div style="font-weight:600">${m[2]}</div><div style="font-size:var(--font-xs);color:var(--text-tertiary)">${m[4]}</div></div><span style="color:var(--text-tertiary)">›</span></div>`).join('')}</div>`},
   /* --- 厨房秘籍 --- */
   async kitchenPage(){const items=await idbAll('kitchen');const cats={};items.forEach(i=>(cats[i.category]=cats[i.category]||[]).push(i));
     return`<div class="card" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none"><div style="font-size:var(--font-lg);font-weight:700">🍳 厨房秘籍</div></div>
@@ -844,21 +844,57 @@ M.health={
     if(await Coins.earn(2,'exercise','运动打卡')){toast('🪙 运动打卡 +2 金币！');renderPage()}},
   async delEx(id){await DB.delete('exercises',id);toast('已删除');renderPage()},
   /* --- 视频跟练 --- */
-  async videoPage(){const vids=[['15分钟全身燃脂','B站','15分钟','https://www.bilibili.com'],['30分钟瑜伽放松','B站','30分钟','https://www.bilibili.com'],['腹部核心训练','抖音','10分钟','https://www.douyin.com'],['帕梅拉有氧运动','B站','20分钟','https://www.bilibili.com']];
-    return`<div class="card" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none"><div style="font-size:var(--font-lg);font-weight:700">📹 视频跟练</div><div style="font-size:var(--font-sm);opacity:.85;margin-top:4px">运动教程 · 计时器</div></div>
-    <div class="card"><div class="card-header"><span class="card-title">⏱️ 运动计时器</span></div>
-    <div style="text-align:center;padding:16px"><div id="tmDisp" style="font-size:46px;font-weight:800;color:var(--primary-dark);font-variant-numeric:tabular-nums">00:00</div>
-    <div style="display:flex;gap:8px;margin-top:14px;justify-content:center"><button class="btn btn-primary" onclick="M.health.tmStart()">开始</button><button class="btn btn-outline" onclick="M.health.tmPause()">暂停</button><button class="btn btn-outline" onclick="M.health.tmReset()">重置</button></div></div></div>
-    <div class="card"><div class="card-header"><span class="card-title">📺 推荐跟练视频</span></div>
-    ${vids.map(v=>`<div class="list-item"><span style="font-size:22px">🎬</span><div style="flex:1"><div style="font-size:var(--font-sm);font-weight:600">${v[0]}</div><div style="font-size:var(--font-xs);color:var(--text-tertiary)">${v[1]} · ${v[2]}</div></div><a href="${v[3]}" target="_blank" class="btn btn-sm btn-secondary">观看</a></div>`).join('')}</div>
-    <button class="btn btn-primary btn-block" onclick="M.health.videoCk()">完成跟练打卡 🪙 +2</button>`},
-  _tmI:null,_tmS:0,
-  tmStart(){if(this._tmI)return;this._tmI=setInterval(()=>{this._tmS++;const m=String(Math.floor(this._tmS/60)).padStart(2,'0'),s=String(this._tmS%60).padStart(2,'0');const el=$('#tmDisp');if(el)el.textContent=`${m}:${s}`},1000)},
-  tmPause(){clearInterval(this._tmI);this._tmI=null},
-  tmReset(){this.tmPause();this._tmS=0;const el=$('#tmDisp');if(el)el.textContent='00:00'},
-  async videoCk(){const t=getToday(),cks=await idbAll('checkins');if(cks.some(c=>c.date===t&&c.skill==='视频跟练'))return toast('今日已打卡');
-    await DB.put('checkins',{id:genId(),skill:'视频跟练',date:t,createdAt:getNow()});
-    if(await Coins.earn(2,'video','视频跟练打卡')){toast('🪙 +2 金币！');renderPage()}},
+  async videoPage(){
+    const list=(await idbAll('exercises')).filter(x=>x.type==='video').sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''));
+    const listHTML=list.length?list.map(v=>`
+      <div class="list-item">
+        <span style="font-size:22px">🎬</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:var(--font-sm);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(v.name)}</div>
+          <div style="font-size:var(--font-xs);color:var(--text-tertiary);margin-top:2px">⏱ ${v.duration}分钟 · ${esc(v.category||'未分类')} · ${esc((v.date||'').slice(5))}</div>
+        </div>
+        <button class="btn btn-sm btn-outline" onclick="M.health.openVideo('${esc(v.url)}','${esc(v.id)}')">打开</button>
+        <button class="btn btn-sm" style="color:var(--danger,#e53935);padding:4px 8px" onclick="M.health.delVideo('${esc(v.id)}')">✕</button>
+      </div>`).join(''):`<div class="empty-state"><div class="empty-icon">🎬</div><div class="empty-text">还没有添加跟练视频，从上方添加吧</div></div>`;
+    return`<div class="card" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none"><div style="font-size:var(--font-lg);font-weight:700">📹 视频跟练</div><div style="font-size:var(--font-sm);opacity:.85;margin-top:4px">添加你常练的跟练视频 · 点击「打开」自动打卡</div></div>
+    <div class="card">
+      <div class="form-group"><label class="form-label">视频名称</label><input class="input" id="vName" placeholder="如：帕梅拉15分钟燃脂"></div>
+      <div class="form-group"><label class="form-label">视频链接</label><input class="input" id="vUrl" placeholder="B站/YouTube/Keep 等"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">时长（分钟）</label><input class="input" id="vDur" type="number" inputmode="numeric" min="1" placeholder="15"></div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">类别</label>
+          <select class="input" id="vCat" onchange="M.health.toggleCustomCat(this)">
+            <option value="有氧">有氧</option><option value="无氧">无氧</option><option value="拉伸">拉伸</option><option value="__other__">其他</option>
+          </select>
+          <input class="input" id="vCustomCat" placeholder="自定义类别" style="display:none;margin-top:6px">
+        </div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:14px;width:100%" onclick="M.health.addVideo()">＋ 添加</button>
+    </div>
+    <div class="card"><div class="card-header"><span class="card-title">📚 跟练视频库</span><span class="card-subtitle">共 ${list.length} 个</span></div>${listHTML}</div>`},
+  toggleCustomCat(sel){const el=$('#vCustomCat');if(!el)return;el.style.display=sel.value==='__other__'?'block':'none';if(sel.value!=='__other__')el.value=''},
+  async addVideo(){
+    const name=$('#vName').value.trim(),url=$('#vUrl').value.trim(),dur=+$('#vDur').value,catSel=$('#vCat').value;
+    if(!name||!url||!dur)return toast('请填写名称、链接和时长');
+    let category=catSel;
+    if(catSel==='__other__'){category=$('#vCustomCat').value.trim()||'其他';if(category==='其他')return toast('请输入自定义类别')}
+    await DB.put('exercises',{id:genId(),type:'video',name,url,duration:dur,category,date:getToday(),createdAt:getNow()});
+    toast('已添加 ✨');
+    $('#vName').value='';$('#vUrl').value='';$('#vDur').value='';$('#vCat').value='有氧';this.toggleCustomCat($('#vCat'));
+    renderPage();
+  },
+  async delVideo(id){await DB.delete('exercises',id);toast('已删除');renderPage()},
+  async openVideo(url,id){
+    if(!url)return toast('该视频没有链接');
+    window.open(url,'_blank','noopener');
+    // 自动打卡 +2 金币（当日每个视频限一次）
+    if(!id)return;
+    const t=getToday();
+    const already=await idbIdx('checkins','date',t);
+    if(already.some(c=>c.skill==='视频跟练'&&c.note===id))return;
+    await DB.put('checkins',{id:genId(),skill:'视频跟练',date:t,note:id,createdAt:getNow()});
+    if(await Coins.earn(2,'video','视频跟练打卡'))toast('🪙 +2 金币！');
+  },
   /* --- 体温 --- */
   async tempPage(){const t=getToday();
     const all=(await idbAll('temperature')).sort((a,b)=>a.date.localeCompare(b.date));
