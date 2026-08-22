@@ -251,11 +251,11 @@ async function applyTheme(k){const t=THEMES[k]||THEMES.apple,r=document.document
 async function applyCustom(c){const{r,g,b}=hexRgb(c),s=document.documentElement.style;s.setProperty('--primary',c);s.setProperty('--primary-dark',shade(c,-.25));s.setProperty('--primary-light',shade(c,.75));s.setProperty('--primary-rgb',`${r},${g},${b}`);const m=document.querySelector('meta[name=theme-color]');if(m)m.content=c;await Settings.set('theme','custom:'+c)}
 
 /* ================= 路由导航 ================= */
-const PAGES={dashboard:['工作台'],tasks:['每日计划'],knowledge:['知识'],life:['生活'],review:['每日复盘'],inspiration:['灵感随笔'],english:['英文积累'],sidejob:['副业区'],news:['新闻区'],accounting:['记账区'],calendar:['日历区'],gamify:['激励中心'],health:['健康管理'],temperature:['体温记录'],kitchen:['厨房秘籍'],recipe:['智能食谱'],exercise:['运动记录'],video:['视频跟练'],story:['短篇故事'],settings:['设置'],guide:['部署教程']};
+const PAGES={dashboard:['工作台'],tasks:['每日计划'],knowledge:['知识'],life:['生活'],review:['每日复盘'],inspiration:['灵感随笔'],english:['英文积累'],sidejob:['副业区'],news:['新闻区'],accounting:['记账区'],calendar:['日历区'],gamify:['激励中心'],health:['健康管理'],temperature:['体温记录'],kitchen:['厨房秘籍'],recipe:['智能食谱'],exercise:['运动记录'],video:['视频跟练'],settings:['设置'],guide:['部署教程']};
 const MAIN_TABS=['dashboard','tasks','knowledge','life'];
 const LIFE_LIST=[['accounting','记账','💰'],['calendar','日历','📅'],['health','健康','🏃'],['gamify','激励中心','🎮'],['sidejob','副业','✍️'],['news','新闻','📰'],['temperature','体温','🌡️'],['settings','设置','⚙️']];
-const KNOW_LIST=[['english','英文积累','🇬🇧'],['inspiration','灵感随笔','💡'],['review','每日复盘','🔄'],['story','短篇故事','📖']];
-const QUICK_MENU=[['inspiration','灵感','💡','#FF9800'],['kitchen','食谱','🍳','#FF5722'],['story','短篇故事','📖','#9C27B0'],['sidejob','副业','✍️','#2196F3'],['accounting','记账','💰','#4CAF50'],['calendar','日历','📅','#00BCD4'],['temperature','体温','🌡️','#F44336']];
+const KNOW_LIST=[['english','英文积累','🇬🇧'],['inspiration','灵感随笔','💡'],['review','每日复盘','🔄']];
+const QUICK_MENU=[['inspiration','灵感','💡','#FF9800'],['kitchen','食谱','🍳','#FF5722'],['sidejob','副业','✍️','#2196F3'],['accounting','记账','💰','#4CAF50'],['calendar','日历','📅','#00BCD4'],['temperature','体温','🌡️','#F44336']];
 let currentPage='dashboard';
 function navTop(){const isMain=MAIN_TABS.includes(currentPage),t=getToday();return`<nav class="top-nav">${isMain?'<div style="width:40px"></div>':'<button class="nav-back" onclick="navigate(\'dashboard\')">‹</button>'}<span class="nav-title">${PAGES[currentPage]?.[0]||'工作台'}</span><span class="nav-date">${fmt(t,'MM/DD')} ${wdCN(t)}</span><button class="nav-action" onclick="quickInsp()">✏️</button></nav>`}
 function navBottom(){const a=p=>currentPage===p?'active':'';return`<nav class="bottom-nav"><button class="tab-item ${a('dashboard')}" onclick="navigate('dashboard')"><span class="tab-icon">🏠</span><span>首页</span></button><button class="tab-item ${a('tasks')}" onclick="navigate('tasks')"><span class="tab-icon">📋</span><span>计划</span></button><button class="tab-fab" onclick="toggleQM()"><div class="fab-circle">+</div><span class="fab-label">快捷</span></button><button class="tab-item ${a('knowledge')}" onclick="navigate('knowledge')"><span class="tab-icon">📚</span><span>知识</span></button><button class="tab-item ${a('life')}" onclick="navigate('life')"><span class="tab-icon">🌱</span><span>生活</span></button></nav>`}
@@ -281,7 +281,6 @@ async function renderPage(){
     else if(currentPage==='gamify'){c.innerHTML=await M.gamify.render();await M.gamify.after()}
     else if(currentPage==='health'){c.innerHTML=await M.health.render(null);await M.health.after(null)}
     else if(['temperature','kitchen','recipe','exercise','video'].includes(currentPage)){c.innerHTML=await M.health.render(currentPage);await M.health.after(currentPage)}
-    else if(currentPage==='story'){c.innerHTML=await M.story.render()}
     else if(currentPage==='settings'){c.innerHTML=await M.settings.render();await M.settings.after()}
     else if(currentPage==='guide'){c.innerHTML=M.guide.render()}
   }catch(e){console.error(e);c.innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">加载失败：${esc(e.message)}</div></div>`}
@@ -303,12 +302,12 @@ const Coins={
 
 /* ================= 模块：启动页 ================= */
 const Splash={
-  praises:['今天是充满可能的一天，老板大人！','您的每一次努力都在创造未来。','老板大人，今天也要元气满满哦！','改变从今天的每一个小习惯开始。','老板大人的执行力，无人能挡！','今天的您，比昨天更接近梦想。','老板大人，您就是自己人生的CEO。','每一个清晨都是新的起点！','把今天过到极致，老板大人！','您的坚持，终将闪耀光芒。'],
+  praises:['今天是充满可能的一天，岑甜甜！','你的每一次努力都在创造未来。','岑甜甜，今天也要元气满满哦！','改变从今天的每一个小习惯开始。','岑甜甜的执行力，无人能挡！','今天的你，比昨天更接近梦想。','岑甜甜，你就是自己人生的主角。','每一个清晨都是新的起点！','把今天过到极致，岑甜甜！','你的坚持，终将闪耀光芒。'],
   async show(){
     const today=getToday();
     if(await Meta.get('lastSplash')===today)return;
     await Meta.set('lastSplash',today);
-    const g=await Settings.get('greeting','嗨，老板大人');
+    const g=await Settings.get('greeting','嗨，岑甜甜🧸');
     const p=this.praises[Math.floor(Math.random()*this.praises.length)];
     const el=document.createElement('div');el.id='splash';
     el.style.cssText='position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,var(--primary),var(--primary-dark));display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;text-align:center;transition:opacity .4s';
@@ -333,7 +332,7 @@ M.dashboard={
     return`
     <div class="card" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none;position:relative">
       <span class="sync-status" style="background:rgba(255,255,255,.2);color:#fff;position:absolute;top:12px;right:12px" onclick="navigate('settings')">${syncTxt}</span>
-      <div style="font-size:var(--font-xl);font-weight:800">${esc(await Settings.get('greeting','嗨，老板大人'))}</div>
+      <div style="font-size:var(--font-xl);font-weight:800">${esc(await Settings.get('greeting','嗨，岑甜甜🧸'))}</div>
       <div style="font-size:var(--font-sm);opacity:.85;margin-top:4px">${fmt(t,'YYYY年MM月DD日')} ${wdCN(t)}</div>
       <div style="display:flex;gap:24px;margin-top:14px">
         <div><div style="font-size:30px;font-weight:800">${bal}</div><div style="font-size:var(--font-xs);opacity:.8">金币余额</div></div>
@@ -555,9 +554,10 @@ M.english={
 M.sidejob={
   tab:'author',
   newsBank:[['网文作者维权再添新进展：平台回应分成比例','文娱周刊','多方协商进行中'],['知名作者集体发声：呼吁版权保护','文学报','行业规范亟待完善'],['作家权益保护新规酝酿出台','新闻出版','政策层面释放积极信号'],['网络文学版权保护研讨会召开','中国文化报','专家学者建言献策'],['网文平台调整签约条款','36氪','分成模式优化中']],
-  anniv:[['08-22','关羽','三国演义','温酒斩华雄','关公威震华夏'],['01-15','林黛玉','红楼梦','林黛玉进贾府','经典文学场景，黛玉初入贾府'],['01-20','孙悟空','西游记','大闹天宫','齐天大圣的传奇时刻'],['02-14','贾宝玉','红楼梦','宝黛初会','宝玉与黛玉初次相见'],['03-15','诸葛亮','三国演义','草船借箭','运筹帷幄的经典战役'],['08-01','武松','水浒传','武松打虎','景阳冈打虎英雄事'],['09-09','林冲','水浒传','风雪山神庙','逼上梁山的转折'],['12-25','唐僧','西游记','取经出发日','西天取经之路开始']],
-  async render(){return`<div class="card" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none"><div style="font-size:var(--font-lg);font-weight:700">✍️ 副业区</div><div style="font-size:var(--font-sm);opacity:.85;margin-top:4px">作者动态 · 角色纪念</div></div>
-  <div class="segmented"><button class="seg-item ${this.tab==='author'?'active':''}" onclick="M.sidejob.switch('author')">维权动态</button><button class="seg-item ${this.tab==='novel'?'active':''}" onclick="M.sidejob.switch('novel')">角色纪念</button></div><div id="sjContent"></div>`},
+  anniv:[['01-23','蓝忘机','魔道祖师','蓝忘机生辰','含光君雅正端方，生辰快乐'],['02-23','洛冰河','人渣反派自救系统','洛冰河生日','冰哥生日快乐'],['04-09','墨燃','二哈和他的白猫师尊','墨燃生辰','墨宗主生日快乐'],['06-10','花城','天官赐福','花城生辰','血雨探花，为爱成神'],['07-15','谢怜','天官赐福','谢怜生辰','太子殿下生辰快乐'],['08-09','楚晚宁','二哈和他的白猫师尊','楚晚宁生辰','晚宁师尊生日快乐'],['09-02','沈清秋','人渣反派自救系统','沈清秋生辰','沈教授生日快乐'],['10-31','魏无羡','魔道祖师','魏无羡生辰','夷陵老祖，天天开心'],['11-05','江澄','魔道祖师','江澄生辰','三毒圣手生日快乐']],
+  oldAnnivIds:['nv_08-22_关羽','nv_01-15_林黛玉','nv_01-20_孙悟空','nv_02-14_贾宝玉','nv_03-15_诸葛亮','nv_08-01_武松','nv_09-09_林冲','nv_12-25_唐僧'],
+  async render(){return`<div class="card" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none"><div style="font-size:var(--font-lg);font-weight:700">✍️ 副业区</div><div style="font-size:var(--font-sm);opacity:.85;margin-top:4px">作者动态 · 耽美角色纪念日</div></div>
+  <div class="segmented"><button class="seg-item ${this.tab==='author'?'active':''}" onclick="M.sidejob.switch('author')">维权动态</button><button class="seg-item ${this.tab==='novel'?'active':''}" onclick="M.sidejob.switch('novel')">角色纪念日</button></div><div id="sjContent"></div>`},
   async switch(t){this.tab=t;document.querySelectorAll('#sjContent').length&&(document.querySelector('.segmented .seg-item:nth-child(1)').classList.toggle('active',t==='author'),document.querySelector('.segmented .seg-item:nth-child(2)').classList.toggle('active',t==='novel'));await this.content()},
   async content(){const c=$('#sjContent');if(!c)return;const t=getToday();
     if(this.tab==='author'){
@@ -565,14 +565,35 @@ M.sidejob={
       if(!cached.length){for(const n of this.newsBank)await DB.put('sidejob_news',{id:'an_'+n[0].slice(0,10),category:'author',date:t,title:n[0],source:n[1],summary:n[2],cachedAt:getNow()});cached=await idbIdx('sidejob_news','category','author')}
       c.innerHTML=`<div class="card"><div class="card-header"><span class="card-title">📰 维权作者动态</span><span class="card-subtitle">联网每日更新 · 离线看缓存</span></div>${cached.map(n=>`<div style="padding:8px 0;border-bottom:1px solid var(--divider)"><div style="font-size:var(--font-sm);font-weight:600">${esc(n.title)}</div><div style="font-size:var(--font-xs);color:var(--text-tertiary);margin-top:3px">${esc(n.source)} · ${esc(n.summary)}</div></div>`).join('')}</div>`}
     else{
-      for(const a of this.anniv)await DB.put('novel_anniversaries',{id:'nv_'+a[0]+'_'+a[1],date:a[0],character:a[1],novel:a[2],event:a[3],description:a[4]});
+      for(const oid of this.oldAnnivIds)await DB.delete('novel_anniversaries',oid);
+      for(const a of this.anniv)await DB.put('novel_anniversaries',{id:'nv_'+a[0]+'_'+a[1],date:a[0],character:a[1],novel:a[2],event:a[3],description:a[4],preset:true});
+      const all=(await idbAll('novel_anniversaries')).sort((x,y)=>x.date.localeCompare(y.date));
       const mmdd=t.slice(5);const tm=new Date();tm.setDate(tm.getDate()+1);const tmmdd=fmt(tm).slice(5);
-      const todayA=this.anniv.filter(a=>a[0]===mmdd),tomorrowA=this.anniv.filter(a=>a[0]===tmmdd);
+      const todayA=all.filter(a=>a.date===mmdd),tomorrowA=all.filter(a=>a.date===tmmdd);
       c.innerHTML=`
-      ${todayA.length?`<div class="card" style="border-color:var(--primary);background:var(--primary-light)"><div class="card-header"><span class="card-title">🎉 今日纪念日</span></div>${todayA.map(a=>`<div style="padding:8px 0"><div style="font-size:var(--font-md);font-weight:700;color:var(--primary-dark)">${a[3]}</div><div style="font-size:var(--font-sm);color:var(--text-secondary);margin-top:3px">${a[1]} ·《${a[2]}》</div><div style="font-size:var(--font-xs);color:var(--text-tertiary);margin-top:3px">${a[4]}</div></div>`).join('')}</div>`:`<div class="card"><div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">今日无角色纪念日</div></div></div>`}
-      ${tomorrowA.length?`<div class="card" style="background:#FFF3E0;border-color:#FF9800"><div class="card-header"><span class="card-title">🔔 明日提醒</span></div>${tomorrowA.map(a=>`<div style="padding:8px 0"><div style="font-size:var(--font-sm);font-weight:600;color:#E65100">${a[3]}</div><div style="font-size:var(--font-xs);color:#BF360C;margin-top:3px">${a[1]} ·《${a[2]}》 · ${a[4]}</div></div>`).join('')}</div>`:''}
-      <div class="card"><div class="card-header"><span class="card-title">📚 全年角色纪念日</span></div>${this.anniv.map(a=>`<div class="list-item"><span style="font-weight:600;color:var(--primary-dark);min-width:52px">${a[0]}</span><div style="flex:1"><div style="font-size:var(--font-sm);font-weight:500">${a[3]}</div><div style="font-size:var(--font-xs);color:var(--text-tertiary)">${a[1]} ·《${a[2]}》</div></div></div>`).join('')}</div>`}},
+      ${todayA.length?`<div class="card" style="border-color:var(--primary);background:var(--primary-light)"><div class="card-header"><span class="card-title">🎉 今日纪念日</span></div>${todayA.map(a=>`<div style="padding:8px 0"><div style="font-size:var(--font-md);font-weight:700;color:var(--primary-dark)">${esc(a.event)}</div><div style="font-size:var(--font-sm);color:var(--text-secondary);margin-top:3px">${esc(a.character)} ·《${esc(a.novel)}》</div><div style="font-size:var(--font-xs);color:var(--text-tertiary);margin-top:3px">${esc(a.description||'')}</div></div>`).join('')}</div>`:`<div class="card"><div class="empty-state"><div class="empty-icon">📅</div><div class="empty-text">今日无角色纪念日</div></div></div>`}
+      ${tomorrowA.length?`<div class="card" style="background:#FFF3E0;border-color:#FF9800"><div class="card-header"><span class="card-title">🔔 明日提醒</span></div>${tomorrowA.map(a=>`<div style="padding:8px 0"><div style="font-size:var(--font-sm);font-weight:600;color:#E65100">${esc(a.event)}</div><div style="font-size:var(--font-xs);color:#BF360C;margin-top:3px">${esc(a.character)} ·《${esc(a.novel)}》${a.description?' · '+esc(a.description):''}</div></div>`).join('')}</div>`:''}
+      <div class="card"><div class="card-header"><span class="card-title">📚 全年角色纪念日</span><button class="btn btn-sm btn-outline" onclick="M.sidejob.addAnniv()">＋ 添加</button></div>${all.map(a=>`<div class="list-item"><span style="font-weight:600;color:var(--primary-dark);min-width:52px">${esc(a.date)}</span><div style="flex:1"><div style="font-size:var(--font-sm);font-weight:500">${esc(a.event)}</div><div style="font-size:var(--font-xs);color:var(--text-tertiary)">${esc(a.character)} ·《${esc(a.novel)}》</div></div>${a.id.startsWith('cu_')?`<button class="btn btn-sm" style="color:var(--danger,#e53935);padding:4px 10px" onclick="M.sidejob.delAnniv('${a.id}')">✕</button>`:`<span style="font-size:16px">🎂</span>`}</div>`).join('')}</div>
+      <div class="card"><div style="font-size:var(--font-xs);color:var(--text-tertiary);text-align:center;padding:4px 0">预置为热门耽美文角色生日 · 点右上「添加」收录你的本命CP 🎂</div></div>`}},
   async after(){await this.content()},
+  addAnniv(){
+    modal('添加角色纪念日',`
+    <div class="form-group"><label class="form-label">角色 / CP 名 *</label><input class="input" id="naChar" placeholder="如：魏无羡 或 顾昀×长庚"></div>
+    <div class="form-group"><label class="form-label">作品 *</label><input class="input" id="naNovel" placeholder="如：魔道祖师"></div>
+    <div class="form-group"><label class="form-label">日期 *</label><input class="input" id="naDate" type="date" value="${getToday()}"></div>
+    <div class="form-group"><label class="form-label">事件</label><input class="input" id="naEvent" placeholder="如：生日 / 初遇纪念日（可选）"></div>
+    <div class="form-group"><label class="form-label">备注</label><input class="input" id="naDesc" placeholder="想说的话（可选）"></div>`,
+    [{label:'取消'},{label:'保存',class:'btn-primary',onClick:async m=>{
+      const ch=m.querySelector('#naChar').value.trim(),nv=m.querySelector('#naNovel').value.trim(),dt=m.querySelector('#naDate').value,ev=m.querySelector('#naEvent').value.trim()||'纪念日',ds=m.querySelector('#naDesc').value.trim();
+      if(!ch||!nv||!dt)return toast('请填写角色、作品和日期');
+      await DB.put('novel_anniversaries',{id:'cu_'+genId(),date:dt.slice(5),character:ch,novel:nv,event:ev,description:ds});
+      toast('纪念日已添加 ✨');await M.sidejob.content();
+    }}]);
+  },
+  delAnniv(id){
+    modal('删除确认','<div style="font-size:var(--font-sm);color:var(--text-secondary)">确定删除这条自定义纪念日吗？</div>',
+    [{label:'取消'},{label:'删除',class:'btn-primary',onClick:async()=>{await DB.delete('novel_anniversaries',id);toast('已删除');await M.sidejob.content()}}]);
+  },
 };
 
 /* ================= 模块：新闻 ================= */
@@ -590,20 +611,6 @@ M.news={
   async after(){await this.list()},
 };
 
-/* ================= 模块：短篇故事 ================= */
-M.story={
-  bank:[{title:'一杯咖啡的温度',content:'清晨六点，老张准时推开咖啡店的门。\n\n这是他退休后开的小店，只有四张桌子。每天第一位客人总是同一个年轻人，西装革履，点一杯美式，坐角落。\n\n年轻人从不说话，只是盯着窗外发呆。老张也不打扰，默默把咖啡端上。\n\n这样的默契持续了三年。\n\n直到有一天，年轻人比平时来得晚。他走到吧台前，第一次开口："老板，给我一杯拿铁吧。今天我辞职了。"\n\n老张愣了一下，然后笑了："恭喜。"\n\n"为什么恭喜？"\n\n"因为你终于敢喝自己想喝的咖啡了。"\n\n年轻人怔住了，随即眼眶泛红。\n\n后来那个位置换了新客人，但老张总会多备一杯拿铁。\n\n因为有些温度，不会因为人走而消失。'},
-  {title:'书页间的约定',content:'图书馆的角落里，有一本被借阅了127次的书。\n\n每次翻开第42页，都能看到不同人留下的纸条。\n\n"今天终于鼓起勇气告白了。——2019.3"\n"考研上岸了！谢谢这本书陪我。——2020.9"\n"分手第三天，书里的故事让我哭了。——2021.7"\n\n第128次借阅的人是个女孩。\n\n她在第42页放了新的纸条："谢谢所有素未谋面的你们。今天我也想留下一个消息：如果生活很难，翻到下一页就好。"\n\n图书馆管理员整理书架时发现了这张纸条，微微一笑，把书放回原位。\n\n第129次借阅的人，是她的前任。'},
-  {title:'最后一班车',content:'末班地铁上，只剩下两个人。\n\n一个戴耳机的中年男人，一个抱着画板的女孩。\n\n列车进隧道时突然停电。黑暗中，男人听见女孩轻声说："能借你手机的光用一下吗？"\n\n男人打开手电筒，看见女孩正对着速写本，画的是他的侧脸。\n\n"你画我？"\n\n"嗯，你看起来很累，但嘴角是上扬的。"女孩认真地说，"像是终于下班了。"\n\n男人沉默了一会，然后说："其实我刚失业。今天是最后一次坐这班车回家。"\n\n女孩停下笔，抬头看他："那你还能笑？"\n\n"因为明天开始，可以坐白天的车了。"\n\n女孩在速写本上写下一行字递给他："祝你好运。"\n\n第二天男人去面试，发现面试官桌上摆着一幅画：一个戴耳机的男人，嘴角上扬。\n\n画下面写着："能笑着面对的人，不会差。"'},
-  {title:'奶奶的菜谱',content:'奶奶去世后，我在她的旧柜子里发现一本发黄的笔记本。\n\n第一页写着"给我孙女的菜谱"。\n\n前面几十页都是正常的菜：红烧肉、糖醋排骨、西红柿炒蛋。每道菜旁边都标注着火候、调料比例。\n\n翻到最后一页，却只有一句话：\n\n"以上菜谱都不重要。重要的是做饭时的心情。心情好的时候，怎么煮都好吃。"\n\n"如果有一天你觉得难过，就给自己煮一碗面，加个荷包蛋，撒点葱花。"\n\n"奶奶陪不了你一辈子，但这碗面可以。"\n\n我合上笔记本，走进厨房。\n\n那碗面的味道，和记忆里一模一样。'}],
-  async render(){const t=getToday(),i=parseInt(t.split('-').join(''))%this.bank.length;
-    await DB.put('short_stories',{id:'st_'+t,date:t,...this.bank[i],cachedAt:getNow()});
-    return this.html(this.bank[i])},
-  html(s){return`<div class="card" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;border:none"><div style="font-size:var(--font-lg);font-weight:700">📖 今日短篇故事</div><div style="font-size:var(--font-sm);opacity:.85;margin-top:4px">每日随机推荐 · 离线可读</div></div>
-  <div class="card"><div style="font-size:var(--font-xl);font-weight:700;margin-bottom:4px">${esc(s.title)}</div><div style="font-size:var(--font-xs);color:var(--text-tertiary);margin-bottom:12px">${fmt(getToday(),'YYYY年MM月DD日')}</div><div style="font-size:var(--font-base);line-height:2;white-space:pre-wrap">${esc(s.content)}</div></div>
-  <button class="btn btn-secondary btn-block" onclick="M.story.refresh()">换一个故事</button>`},
-  refresh(){$('#pageContent').innerHTML=this.html(this.bank[Math.floor(Math.random()*this.bank.length)])},
-};
 
 /* ================= 模块：记账 ================= */
 M.accounting={
@@ -923,7 +930,7 @@ M.settings={
         <div style="display:flex;gap:8px"><button class="btn btn-primary" style="flex:1" onclick="M.settings.login()">登录</button><button class="btn btn-outline" style="flex:1" onclick="M.settings.register()">注册新账号</button></div>`}
     </div>
     <div class="card"><div class="card-header"><span class="card-title">🧑‍💼 个性化</span></div>
-      <div class="form-group"><label class="form-label">问候语（启动页展示）</label><input class="input" id="stGreet" placeholder="嗨，老板大人" value="${esc(await Settings.get('greeting','嗨，老板大人'))}"></div>
+      <div class="form-group"><label class="form-label">问候语（启动页展示）</label><input class="input" id="stGreet" placeholder="嗨，岑甜甜🧸" value="${esc(await Settings.get('greeting','嗨，岑甜甜🧸'))}"></div>
       <div class="form-group"><label class="form-label">每日金币上限</label><input class="input" type="number" id="stCoins" value="${await Settings.get('maxDailyCoins',10)}"></div>
       <button class="btn btn-primary btn-block" onclick="M.settings.save()">保存设置</button></div>
     <div class="card"><div class="card-header"><span class="card-title">📚 部署与使用教程</span></div>
